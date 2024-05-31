@@ -1,0 +1,209 @@
+tast:-1
+
+develop a cammad line todo list application that allows users to manage tasks features
+1 task management: allo users to add,remove,and mark tasks as completed.
+2 task priority:implement a priority system for tasks (e.g high medium low).
+3 due dates:enable users to setdue dates foe tasks.
+4 list view :display tasks in aclist with their details.
+5 data persistance: store tasks in a file/database for persistance across sessions.
+
+
+import json
+import datetime
+
+class Task:
+    def __init__(self, description, priority, due_date=None, completed=False):
+        self.description = description
+        self.priority = priority
+        self.due_date = due_date
+        self.completed = completed
+
+    def __repr__(self):
+        return f"{self.description} (Priority: {self.priority}, Due: {self.due_date}, Completed: {self.completed})"
+
+class TodoList:
+    def __init__(self):
+        self.tasks = []
+
+    def add_task(self, task):
+        self.tasks.append(task)
+
+    def remove_task(self, index):
+        del self.tasks[index]
+
+    def mark_completed(self, index):
+        self.tasks[index].completed = True
+
+    def list_tasks(self):
+        for index, task in enumerate(self.tasks):
+            print(f"{index + 1}. {task}")
+
+    def save_to_file(self, filename):
+        with open(filename, 'w') as f:
+            json.dump([task.__dict__ for task in self.tasks], f)
+
+    def load_from_file(self, filename):
+        with open(filename, 'r') as f:
+            data = json.load(f)
+            self.tasks = [Task(**task) for task in data]
+
+def main():
+    todo_list = TodoList()
+    todo_list.load_from_file("tasks.json")
+
+    while True:
+        print("\nTODO LIST")
+        print("1. Add Task")
+        print("2. Remove Task")
+        print("3. Mark Task as Completed")
+        print("4. List Tasks")
+        print("5. Save and Quit")
+
+        choice = input("Enter your choice: ")
+
+        if choice == "1":
+            description = input("Enter task description: ")
+            priority = input("Enter task priority (high/medium/low): ")
+            due_date = input("Enter due date (YYYY-MM-DD) (optional): ")
+            if due_date:
+                due_date = datetime.datetime.strptime(due_date, "%Y-%m-%d").date()
+            todo_list.add_task(Task(description, priority, due_date))
+
+        elif choice == "2":
+            todo_list.list_tasks()
+            index = int(input("Enter task number to remove: ")) - 1
+            todo_list.remove_task(index)
+
+        elif choice == "3":
+            todo_list.list_tasks()
+            index = int(input("Enter task number to mark as completed: ")) - 1
+            todo_list.mark_completed(index)
+
+        elif choice == "4":
+            todo_list.list_tasks()
+
+        elif choice == "5":
+            todo_list.save_to_file("tasks.json")
+            print("Tasks saved. Exiting...")
+            break
+
+        else:
+            print("Invalid choice. Please try again.")
+
+if __name__ == "__main__":
+    main()
+
+
+
+
+
+
+
+
+
+task :-2 persnol budget tracker 
+develop a console based budget tracker tat allows users to manage their expense and income.
+1 expense and income entry: allow users to input expenses and income with catagories and amounts.
+2 budget calculation: calculate the remaining budgetafter deducting expenses from income
+3 axpense analysis: provide insights by catagorizing expenses and displaying spending trends.
+4 data persistence: store transactions in a file/database for trackingover time. 
+
+
+
+
+import json
+
+class BudgetTracker:
+    def __init__(self):
+        self.transactions = []
+
+    def add_transaction(self, category, amount, transaction_type):
+        transaction = {
+            "category": category,
+            "amount": amount,
+            "type": transaction_type
+        }
+        self.transactions.append(transaction)
+
+    def calculate_budget(self, income):
+        total_expense = sum(transaction['amount'] for transaction in self.transactions if transaction['type'] == 'expense')
+        remaining_budget = income - total_expense
+        return remaining_budget
+
+    def analyze_expenses(self):
+        expense_categories = {}
+        for transaction in self.transactions:
+            if transaction['type'] == 'expense':
+                category = transaction['category']
+                amount = transaction['amount']
+                if category in expense_categories:
+                    expense_categories[category] += amount
+                else:
+                    expense_categories[category] = amount
+        return expense_categories
+
+    def save_transactions(self, filename):
+        with open(filename, 'w') as f:
+            json.dump(self.transactions, f)
+
+    def load_transactions(self, filename):
+        with open(filename, 'r') as f:
+            self.transactions = json.load(f)
+
+def main():
+    budget_tracker = BudgetTracker()
+
+    while True:
+        print("\n1. Add Transaction")
+        print("2. Calculate Remaining Budget")
+        print("3. Analyze Expenses")
+        print("4. Save Transactions")
+        print("5. Load Transactions")
+        print("6. Exit")
+
+        choice = input("\nEnter your choice: ")
+
+        if choice == '1':
+            category = input("Enter category (expense/income): ")
+            amount = float(input("Enter amount: "))
+            transaction_type = 'expense' if category.lower() == 'expense' else 'income'
+            budget_tracker.add_transaction(category, amount, transaction_type)
+            print("Transaction added successfully.")
+
+        elif choice == '2':
+            income = float(input("Enter your income: "))
+            remaining_budget = budget_tracker.calculate_budget(income)
+            print("Remaining budget:", remaining_budget)
+
+        elif choice == '3':
+            expense_categories = budget_tracker.analyze_expenses()
+            print("Expense Analysis:")
+            for category, amount in expense_categories.items():
+                print(f"{category}: {amount}")
+
+        elif choice == '4':
+            filename = input("Enter filename to save transactions: ")
+            budget_tracker.save_transactions(filename)
+            print("Transactions saved successfully.")
+
+        elif choice == '5':
+            filename = input("Enter filename to load transactions: ")
+            budget_tracker.load_transactions(filename)
+            print("Transactions loaded successfully.")
+
+        elif choice == '6':
+            print("Exiting program.")
+            break
+
+        else:
+            print("Invalid choice. Please enter a valid option.")
+
+if __name__ == "__main__":
+    main()
+
+
+
+
+
+
+
